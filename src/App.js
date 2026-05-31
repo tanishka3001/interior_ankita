@@ -498,6 +498,7 @@ function App() {
 
         <div className="about-contact">
           <p className="about-contact-label">Let’s connect</p>
+          <strong className="about-contact-name">Ankita Verma</strong>
           <a href="tel:+916267301774">Phone: 6267301774</a>
           <a href="mailto:ankiisri08@gmail.com">Email: ankiisri08@gmail.com</a>
           <span className="about-contact-note">Available for consultations and project enquiries.</span>

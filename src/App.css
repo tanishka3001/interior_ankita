@@ -574,6 +574,14 @@
   font-weight: 700;
 }
 
+.about-contact-name {
+  display: block;
+  color: var(--ink);
+  font-family: 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+  font-size: clamp(1.7rem, 2.4vw, 2.25rem);
+  line-height: 1;
+}
+
 .about-contact a {
   color: var(--ink);
   text-decoration: none;

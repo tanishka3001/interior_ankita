@@ -450,7 +450,7 @@ function App() {
 
         <div className="hero-image-wrap">
           <div className="hero-image-placeholder">
-            <img src={MAIN_PORTFOLIO_IMAGE_URL} alt="Interior design portfolio" />
+            <img src="https://ibb.co/Xx4K5y2y" alt="Interior design portfolio" />
           </div>
         </div>
       </section>

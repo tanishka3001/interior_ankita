@@ -5,7 +5,8 @@ const { MongoClient, ObjectId } = require('mongodb');
 const mongoUri = process.env.MONGODB_URI;
 const databaseName = process.env.MONGODB_DB || 'portfolio';
 const localDbPath = path.join(process.cwd(), '.local-data', 'portfolio-db.json');
-const allowLocalFallback = process.env.ALLOW_LOCAL_DB_FALLBACK === 'true' || process.env.NODE_ENV !== 'production';
+const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
+const allowLocalFallback = process.env.ALLOW_LOCAL_DB_FALLBACK === 'true' || !isProduction;
 
 let cachedClient = null;
 let cachedDb = null;

@@ -340,12 +340,25 @@
 
 .work-card {
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   border-radius: 30px;
   border: 1px solid rgba(0, 121, 121, 0.12);
   background: rgba(255, 255, 255, 0.84);
   box-shadow: 0 16px 34px rgba(93, 61, 37, 0.08), 0 0 0 rgba(222, 174, 80, 0);
   transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.work-card::before {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  z-index: -1;
+  border-radius: 34px;
+  background: linear-gradient(120deg, rgba(255, 216, 138, 0), rgba(222, 174, 80, 0.36), rgba(255, 216, 138, 0));
+  background-size: 220% 100%;
+  opacity: 0.7;
+  filter: blur(10px);
+  animation: goldTrace 4.6s linear infinite;
 }
 
 .work-card:hover {
@@ -369,21 +382,6 @@
   padding: 20px;
   overflow: hidden;
   isolation: isolate;
-}
-
-.work-image::before {
-  content: '';
-  position: absolute;
-  inset: 10px;
-  z-index: 2;
-  border: 1px solid rgba(255, 214, 126, 0.76);
-  border-radius: 22px;
-  background: linear-gradient(90deg, transparent, rgba(255, 224, 153, 0.42), transparent);
-  background-size: 220% 100%;
-  box-shadow: 0 0 18px rgba(222, 174, 80, 0.32), inset 0 0 18px rgba(255, 239, 190, 0.2);
-  opacity: 0.82;
-  pointer-events: none;
-  animation: goldTrace 3.6s linear infinite;
 }
 
 .work-image img {
@@ -1098,10 +1096,10 @@
     aspect-ratio: 16 / 9;
   }
 
-  .work-image::before {
-    inset: 8px;
-    border-radius: 18px;
-    opacity: 0.72;
+  .work-card::before {
+    inset: -3px;
+    opacity: 0.48;
+    filter: blur(8px);
   }
 
   .work-copy h3 {

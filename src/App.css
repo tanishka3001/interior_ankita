@@ -351,6 +351,10 @@
   box-shadow: 0 24px 40px rgba(93, 61, 37, 0.14);
 }
 
+.work-card-image-only .work-image {
+  aspect-ratio: 4 / 3;
+}
+
 .work-image {
   position: relative;
   aspect-ratio: 16 / 9;

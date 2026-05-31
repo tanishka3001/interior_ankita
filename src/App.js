@@ -359,6 +359,8 @@ function App() {
     return text || fallback;
   };
 
+  const getProjectText = (project, field) => String(project[field] || '').trim();
+
   const handleProjectDelete = async (projectId) => {
     if (!adminVerified || !adminAuthToken.trim()) {
       setProjectStatus('Verify the admin token before deleting projects.');
@@ -466,22 +468,34 @@ function App() {
         </div>
 
         <div className="work-grid">
-          {(backendProjects.length > 0 ? backendProjects : defaultProjects).map((project, index) => (
-            <article className="work-card" key={project._id || project.name || index}>
-              <div className={`work-image work-image-${index + 1}`}>
-                {project.imageUrl ? (
-                  <img src={project.imageUrl} alt={formatProjectField(project.name, 'Project image')} />
-                ) : (
-                  <span>Project image</span>
-                )}
-              </div>
-              <div className="work-copy">
-                <p>{formatProjectField(project.scope, 'Interior project')}</p>
-                <h3>{formatProjectField(project.name, 'Untitled Project')}</h3>
-                <span>{formatProjectField(project.note, 'View the project image.')}</span>
-              </div>
-            </article>
-          ))}
+          {(backendProjects.length > 0 ? backendProjects : defaultProjects).map((project, index) => {
+            const projectName = getProjectText(project, 'name');
+            const projectScope = getProjectText(project, 'scope');
+            const projectNote = getProjectText(project, 'note');
+            const hasProjectText = projectName || projectScope || projectNote;
+
+            return (
+              <article
+                className={`work-card${hasProjectText ? '' : ' work-card-image-only'}`}
+                key={project._id || project.name || index}
+              >
+                <div className={`work-image work-image-${index + 1}`}>
+                  {project.imageUrl ? (
+                    <img src={project.imageUrl} alt={projectName || 'Project image'} />
+                  ) : (
+                    <span>Project image</span>
+                  )}
+                </div>
+                {hasProjectText ? (
+                  <div className="work-copy">
+                    {projectScope ? <p>{projectScope}</p> : null}
+                    {projectName ? <h3>{projectName}</h3> : null}
+                    {projectNote ? <span>{projectNote}</span> : null}
+                  </div>
+                ) : null}
+              </article>
+            );
+          })}
         </div>
       </section>
 
@@ -655,7 +669,7 @@ function App() {
               backendProjects.map((project) => (
                 <article className="admin-card" key={project._id || project.name}>
                   <div className="admin-card-top">
-                    <strong>{formatProjectField(project.name, 'Untitled Project')}</strong>
+                    <strong>{formatProjectField(project.name, 'Interior Design Project')}</strong>
                     <span>{formatProjectField(project.scope, 'Interior project')}</span>
                   </div>
                   <a href={project.imageUrl || '#work'} target="_blank" rel="noreferrer">

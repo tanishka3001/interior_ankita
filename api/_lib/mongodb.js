@@ -5,6 +5,7 @@ const { MongoClient, ObjectId } = require('mongodb');
 const mongoUri = process.env.MONGODB_URI;
 const databaseName = process.env.MONGODB_DB || 'portfolio';
 const localDbPath = path.join(process.cwd(), '.local-data', 'portfolio-db.json');
+const allowLocalFallback = process.env.ALLOW_LOCAL_DB_FALLBACK === 'true' || process.env.NODE_ENV !== 'production';
 
 let cachedClient = null;
 let cachedDb = null;
@@ -129,8 +130,12 @@ function createLocalDatabase() {
 
 async function connectToDatabase() {
   if (!mongoUri) {
-    console.warn('MONGODB_URI is not set. Using local file storage.');
-    return { client: null, db: createLocalDatabase(), isLocalFallback: true };
+    if (allowLocalFallback) {
+      console.warn('MONGODB_URI is not set. Using local file storage.');
+      return { client: null, db: createLocalDatabase(), isLocalFallback: true };
+    }
+
+    throw new Error('MONGODB_URI is not set.');
   }
 
   if (cachedClient && cachedDb) {
@@ -147,8 +152,12 @@ async function connectToDatabase() {
 
     return { client, db, isLocalFallback: false };
   } catch (error) {
-    console.warn('MongoDB connection failed. Using local file storage.', error.message);
-    return { client: null, db: createLocalDatabase(), isLocalFallback: true };
+    if (allowLocalFallback) {
+      console.warn('MongoDB connection failed. Using local file storage.', error.message);
+      return { client: null, db: createLocalDatabase(), isLocalFallback: true };
+    }
+
+    throw error;
   }
 }
 

@@ -60,6 +60,6 @@ module.exports = async (req, res) => {
     });
   } catch (error) {
     console.error('Contact API error:', error);
-    sendJson(res, 500, { error: 'Unable to save enquiry right now.' });
+    sendJson(res, 500, { error: error.message || 'Unable to save enquiry right now.' });
   }
 };

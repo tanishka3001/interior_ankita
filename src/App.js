@@ -119,14 +119,16 @@ function App() {
         body: JSON.stringify(payload),
       });
 
+      const data = await readJsonResponse(response, 'Unable to send message.');
+
       if (!response.ok) {
-        throw new Error('Request failed');
+        throw new Error(data.error || 'Unable to send message.');
       }
 
       event.currentTarget.reset();
       setFormStatus('Message sent. Your backend can save it now.');
     } catch (error) {
-      setFormStatus('Message could not be sent right now. Please try again later.');
+      setFormStatus(error.message || 'Message could not be sent right now. Please try again later.');
     } finally {
       setIsSubmitting(false);
     }

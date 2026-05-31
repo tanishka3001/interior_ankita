@@ -39,6 +39,13 @@ REACT_APP_CONTACT_API_URL=/api/contact
 REACT_APP_API_BASE_URL=https://your-deployed-site.vercel.app
 ```
 
+Production deployments should point `MONGODB_URI` to Atlas. The local file fallback is only for development and is disabled in production, so saved messages and projects will appear in your Atlas database and collections.
+
+In MongoDB Compass, look for:
+
+- Database: `InteriorWebsite`
+- Collections: `contact_messages` and `portfolio_projects`
+
 ## Local development
 
 ```bash

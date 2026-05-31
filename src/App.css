@@ -1069,14 +1069,15 @@
   .work-grid {
     display: grid;
     grid-auto-flow: column;
-    grid-auto-columns: minmax(82%, 86%);
+    grid-auto-columns: calc(100vw - 56px);
     gap: 16px;
+    align-items: start;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     scroll-snap-stop: always;
-    scroll-padding-inline: 12px;
-    padding: 4px 12px 18px;
-    margin: 4px -12px 0;
+    scroll-padding-inline: 14px;
+    padding: 4px 14px 20px;
+    margin: 4px -14px 0;
     overscroll-behavior-inline: contain;
     -webkit-overflow-scrolling: touch;
     -ms-overflow-style: none;
@@ -1090,9 +1091,11 @@
   .work-card {
     scroll-snap-align: center;
     transform: translateZ(0);
+    width: 100%;
   }
 
-  .work-image {
+  .work-image,
+  .work-card-image-only .work-image {
     aspect-ratio: 16 / 9;
   }
 
@@ -1162,7 +1165,7 @@
   }
 
   .work-grid {
-    grid-auto-columns: minmax(86%, 90%);
+    grid-auto-columns: calc(100vw - 44px);
     gap: 14px;
   }
 
@@ -1234,7 +1237,7 @@
   }
 
   .work-grid {
-    grid-auto-columns: minmax(88%, 92%);
+    grid-auto-columns: calc(100vw - 34px);
   }
 
   .work-image {

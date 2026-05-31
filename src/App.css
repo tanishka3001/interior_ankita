@@ -12,9 +12,9 @@
 .portfolio-page {
   position: relative;
   z-index: 1;
-  width: min(1220px, calc(100% - 24px));
+  width: min(1360px, calc(100% - 56px));
   margin: 0 auto;
-  padding: 18px 0 52px;
+  padding: 24px 0 64px;
 }
 
 .ambient {
@@ -116,10 +116,10 @@
 
 .hero {
   display: grid;
-  grid-template-columns: 1.05fr 0.95fr;
-  gap: 28px;
+  grid-template-columns: minmax(0, 1.08fr) minmax(360px, 0.92fr);
+  gap: clamp(24px, 4vw, 56px);
   align-items: center;
-  padding: 28px 0 16px;
+  padding: 44px 0 28px;
 }
 
 .eyebrow,
@@ -145,8 +145,8 @@
 }
 
 .hero-copy h1 {
-  max-width: 11.5ch;
-  font-size: clamp(2.7rem, 5.4vw, 4.8rem);
+  max-width: 13.5ch;
+  font-size: clamp(2.8rem, 5vw, 5.2rem);
   line-height: 1.04;
 }
 
@@ -221,10 +221,12 @@
 .hero-image-wrap {
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 .hero-image-placeholder {
-  width: min(100%, 440px);
+  width: min(100%, 520px);
+  min-height: 560px;
   aspect-ratio: 4 / 5;
   display: flex;
   flex-direction: column;
@@ -236,6 +238,7 @@
   border: 1px solid rgba(0, 121, 121, 0.14);
   background: linear-gradient(180deg, rgba(255, 240, 228, 0.9), rgba(255, 224, 197, 0.92));
   box-shadow: 0 20px 50px rgba(93, 61, 37, 0.1);
+  animation: cardLift 900ms ease both;
 }
 
 .hero-image-placeholder span,
@@ -254,15 +257,16 @@
 .work-section,
 .about-section,
 .consultation-page {
-  margin-top: 30px;
+  margin-top: 48px;
 }
 
 .section-head {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 10px;
-  margin-bottom: 24px;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 28px;
+  text-align: center;
 }
 
 .section-label-animated {
@@ -281,6 +285,7 @@
   letter-spacing: -0.07em;
   text-transform: uppercase;
   color: var(--ink);
+  align-items: center;
 }
 
 .work-heading span {
@@ -295,7 +300,7 @@
 }
 
 .work-heading span:last-child {
-  margin-left: clamp(0rem, 4vw, 3.25rem);
+  margin-left: 0;
   animation-delay: -2.5s;
 }
 
@@ -319,12 +324,12 @@
 .work-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
+  gap: 22px;
 }
 
 .work-card {
   overflow: hidden;
-  border-radius: 28px;
+  border-radius: 30px;
   border: 1px solid rgba(0, 121, 121, 0.12);
   background: rgba(255, 255, 255, 0.84);
   box-shadow: 0 16px 34px rgba(93, 61, 37, 0.08);
@@ -338,7 +343,7 @@
 
 .work-image {
   position: relative;
-  min-height: 320px;
+  min-height: 340px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -346,6 +351,7 @@
   text-align: center;
   padding: 20px;
   overflow: hidden;
+  isolation: isolate;
 }
 
 .work-image img {
@@ -354,7 +360,29 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transform: scale(1.01);
+  transition: transform 500ms ease, filter 500ms ease;
+  animation: imageReveal 900ms ease both;
+  filter: saturate(0.96) contrast(1.02);
 }
+
+.work-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255, 248, 240, 0.06), rgba(45, 32, 24, 0.02));
+  opacity: 0;
+  transition: opacity 260ms ease;
+  pointer-events: none;
+}
+
+.work-card:hover .work-image img {
+  transform: scale(1.05);
+  filter: saturate(1.02) contrast(1.05);
+}
+
+.work-card:hover .work-image::after {
+  opacity: 1;
 
 .work-image-1 {
   background: linear-gradient(160deg, rgba(255, 240, 228, 0.96), rgba(36, 177, 177, 0.14)),
@@ -401,6 +429,18 @@
   animation: riseIn 700ms ease 240ms both;
 }
 
+.work-card:nth-child(1) .work-image img {
+  animation-delay: 80ms;
+}
+
+.work-card:nth-child(2) .work-image img {
+  animation-delay: 180ms;
+}
+
+.work-card:nth-child(3) .work-image img {
+  animation-delay: 280ms;
+}
+
 @keyframes riseIn {
   from {
     opacity: 0;
@@ -409,6 +449,30 @@
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes cardLift {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes imageReveal {
+  from {
+    opacity: 0;
+    transform: scale(1.04);
+    filter: blur(4px) saturate(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.01);
+    filter: blur(0) saturate(0.96) contrast(1.02);
   }
 }
 
@@ -614,6 +678,13 @@
   font: inherit;
 }
 
+.admin-form-note {
+  grid-column: 1 / -1;
+  margin-top: -2px;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
 .admin-project-form button {
   grid-column: 1 / -1;
   justify-self: start;
@@ -797,20 +868,16 @@
   }
 
   .hero-copy h1 {
-    max-width: 14ch;
+    max-width: 15ch;
   }
 
   .section-head {
     flex-direction: column;
-    align-items: start;
+    align-items: center;
   }
 
   .hero-image-wrap {
     justify-content: start;
-  }
-
-  .section-head > p {
-    max-width: none;
   }
 
   .about-contact {
@@ -818,18 +885,29 @@
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .portfolio-page {
-    width: min(100% - 16px, 1220px);
-    padding-bottom: 28px;
+    width: min(100% - 20px, 1360px);
+    padding: 14px 0 30px;
   }
 
   .navbar {
-    border-radius: 24px;
-    padding: 12px 14px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 14px;
+    border-radius: 26px;
+  }
+
+  .brand {
+    width: 100%;
+    text-align: left;
+    font-size: 0.98rem;
   }
 
   .nav-links {
+    width: 100%;
+    justify-content: flex-start;
     gap: 8px;
   }
 
@@ -838,8 +916,105 @@
     padding: 8px 10px;
   }
 
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 22px;
+    padding-top: 26px;
+  }
+
   .hero-copy h1 {
-    font-size: clamp(2.3rem, 10vw, 3.4rem);
+    max-width: 100%;
+    font-size: clamp(2.45rem, 11vw, 4rem);
+  }
+
+  .hero-description {
+    max-width: none;
+  }
+
+  .hero-image-wrap {
+    justify-content: stretch;
+  }
+
+  .hero-image-placeholder {
+    width: 100%;
+    min-height: 420px;
+    aspect-ratio: auto;
+  }
+
+  .work-section,
+  .about-section,
+  .consultation-page {
+    margin-top: 42px;
+  }
+
+  .work-heading {
+    font-size: clamp(2.35rem, 13vw, 4.1rem);
+    text-wrap: balance;
+  }
+
+  .work-grid {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(82%, 86%);
+    gap: 14px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 4px;
+    padding: 0 4px 12px;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .work-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .work-card {
+    scroll-snap-align: center;
+  }
+
+  .work-image {
+    min-height: 300px;
+  }
+
+  .work-copy h3 {
+    font-size: 1.18rem;
+  }
+
+  .about-section,
+  .consultation-grid,
+  .admin-project-form,
+  .admin-toolbar,
+  .admin-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .consultation-form,
+  .admin-project-form,
+  .admin-toolbar,
+  .admin-card,
+  .about-contact {
+    border-radius: 22px;
+  }
+
+  .consultation-form {
+    padding: 18px;
+  }
+
+  .admin-project-form,
+  .admin-toolbar {
+    padding: 18px;
+  }
+
+  .admin-card-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-copy h1 {
+    font-size: clamp(2.25rem, 12vw, 3.35rem);
   }
 
   .hero-image-placeholder,
@@ -855,19 +1030,88 @@
     width: 100%;
   }
 
+  .work-grid {
+    grid-auto-columns: minmax(88%, 92%);
+  }
+
   .work-image {
     min-height: 240px;
   }
 
-  .consultation-form {
-    padding: 18px;
+  .hero-summary span {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
   }
 
-  .admin-project-form {
-    padding: 18px;
+  .nav-links button,
+  .nav-links a {
+    flex: 1 1 auto;
+    text-align: center;
   }
 
+  .section-label,
+  .eyebrow {
+    letter-spacing: 0.18em;
+  }
+
+  .section-head {
+    margin-bottom: 22px;
+  }
+}
+
+@media (max-width: 420px) {
+  .portfolio-page {
+    width: min(100% - 14px, 1360px);
+    padding: 12px 0 24px;
+  }
+
+  .navbar {
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .brand {
+    font-size: 0.92rem;
+  }
+
+  .nav-links {
+    gap: 6px;
+  }
+
+  .nav-links button,
+  .nav-links a {
+    padding: 7px 9px;
+    font-size: 0.94rem;
+  }
+
+  .hero {
+    padding-top: 20px;
+  }
+
+  .hero-copy h1 {
+    font-size: clamp(2rem, 13vw, 3rem);
+  }
+
+  .hero-image-placeholder {
+    min-height: 340px;
+  }
+
+  .work-heading {
+    font-size: clamp(2rem, 14vw, 3.35rem);
+  }
+
+  .work-grid {
+    grid-auto-columns: minmax(92%, 96%);
+  }
+
+  .work-image {
+    min-height: 220px;
+  }
+
+  .consultation-form,
+  .admin-project-form,
   .admin-toolbar {
-    padding: 18px;
+    padding: 16px;
   }
 }

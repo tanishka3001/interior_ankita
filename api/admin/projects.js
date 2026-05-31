@@ -59,8 +59,8 @@ module.exports = async (req, res) => {
       const note = String(body.note || '').trim();
       const imageUrl = String(body.imageUrl || '').trim();
 
-      if (!name || !scope || !note || !imageUrl) {
-        sendJson(res, 400, { error: 'Name, scope, note, and imageUrl are required.' });
+      if (!imageUrl) {
+        sendJson(res, 400, { error: 'Image URL is required.' });
         return;
       }
 

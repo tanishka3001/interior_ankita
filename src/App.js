@@ -255,6 +255,11 @@ function App() {
     }
   };
 
+  const formatProjectField = (value, fallback) => {
+    const text = String(value || '').trim();
+    return text || fallback;
+  };
+
   const handleProjectDelete = async (projectId) => {
     if (!adminVerified || !adminAuthToken.trim()) {
       setProjectStatus('Verify the admin token before deleting projects.');
@@ -363,18 +368,18 @@ function App() {
 
         <div className="work-grid">
           {(backendProjects.length > 0 ? backendProjects : defaultProjects).map((project, index) => (
-            <article className="work-card" key={project.name}>
+            <article className="work-card" key={project._id || project.name || index}>
               <div className={`work-image work-image-${index + 1}`}>
                 {project.imageUrl ? (
-                  <img src={project.imageUrl} alt={project.name} />
+                  <img src={project.imageUrl} alt={formatProjectField(project.name, 'Project image')} />
                 ) : (
                   <span>Project image</span>
                 )}
               </div>
               <div className="work-copy">
-                <p>{project.scope}</p>
-                <h3>{project.name}</h3>
-                <span>{project.note}</span>
+                <p>{formatProjectField(project.scope, 'Interior project')}</p>
+                <h3>{formatProjectField(project.name, 'Untitled Project')}</h3>
+                <span>{formatProjectField(project.note, 'View the project image.')}</span>
               </div>
             </article>
           ))}
@@ -511,25 +516,26 @@ function App() {
           <form className="admin-project-form" onSubmit={handleProjectSubmit}>
             <label>
               Project name
-              <input name="name" type="text" placeholder="Example: The Olive Loft" defaultValue="" />
+              <input name="name" type="text" placeholder="Optional" defaultValue="" />
             </label>
             <label>
               Scope
               <input
                 name="scope"
                 type="text"
-                placeholder="Commercials & Residentials"
-                defaultValue="Commercials & Residentials"
+                placeholder="Optional"
+                defaultValue=""
               />
             </label>
             <label>
               Note
-              <input name="note" type="text" placeholder="Short description for the card" defaultValue="" />
+              <input name="note" type="text" placeholder="Optional" defaultValue="" />
             </label>
             <label>
               Image URL
-              <input name="imageUrl" type="url" placeholder="https://..." defaultValue="" />
+              <input name="imageUrl" type="url" placeholder="https://..." defaultValue="" required />
             </label>
+            <small className="admin-form-note">Only the image URL is required. The rest are optional.</small>
             <button type="submit" disabled={isSavingProject}>
               {isSavingProject ? 'Saving...' : 'Save project'}
             </button>
@@ -546,13 +552,13 @@ function App() {
               backendProjects.map((project) => (
                 <article className="admin-card" key={project._id || project.name}>
                   <div className="admin-card-top">
-                    <strong>{project.name}</strong>
-                    <span>{project.scope}</span>
+                    <strong>{formatProjectField(project.name, 'Untitled Project')}</strong>
+                    <span>{formatProjectField(project.scope, 'Interior project')}</span>
                   </div>
                   <a href={project.imageUrl || '#work'} target="_blank" rel="noreferrer">
                     {project.imageUrl || 'No image set yet'}
                   </a>
-                  <p>{project.note}</p>
+                  <p>{formatProjectField(project.note, 'No extra note added.')}</p>
                   {project._id ? (
                     <button
                       type="button"

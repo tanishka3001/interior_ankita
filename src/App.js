@@ -5,7 +5,8 @@ const ADMIN_PATH = '/studio-admin';
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '';
 const ADMIN_SESSION_KEY = 'interior-ankita-admin-session';
 const ADMIN_SESSION_MAX_AGE_MS = 1000 * 60 * 60 * 24 * 14;
-const MAIN_PORTFOLIO_IMAGE_URL = 'https://ibb.co/Xx4K5y2y';
+const MAIN_PORTFOLIO_IMAGE_URL =
+  'https://i.ibb.co/4RfXSsms/78110dc5-d62d-411e-8f2c-5e693435959d.jpg';
 
 const apiUrl = (path) => {
   if (/^https?:\/\//i.test(path)) {
@@ -450,7 +451,7 @@ function App() {
 
         <div className="hero-image-wrap">
           <div className="hero-image-placeholder">
-            <img src="https://ibb.co/Xx4K5y2y" alt="Interior design portfolio" />
+            <img src={MAIN_PORTFOLIO_IMAGE_URL} alt="Interior design portfolio" />
           </div>
         </div>
       </section>

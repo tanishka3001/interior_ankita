@@ -3,6 +3,8 @@ import './App.css';
 
 const ADMIN_PATH = '/studio-admin';
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '';
+const ADMIN_SESSION_KEY = 'interior-ankita-admin-session';
+const ADMIN_SESSION_MAX_AGE_MS = 1000 * 60 * 60 * 24 * 14;
 
 const apiUrl = (path) => {
   if (/^https?:\/\//i.test(path)) {
@@ -28,6 +30,58 @@ const readJsonResponse = async (response, fallbackMessage) => {
   }
 
   return response.json();
+};
+
+const readStoredAdminToken = () => {
+  if (typeof window === 'undefined') {
+    return '';
+  }
+
+  try {
+    const rawSession = window.localStorage.getItem(ADMIN_SESSION_KEY);
+
+    if (!rawSession) {
+      return '';
+    }
+
+    const parsedSession = JSON.parse(rawSession);
+    if (!parsedSession?.token || !parsedSession?.savedAt) {
+      window.localStorage.removeItem(ADMIN_SESSION_KEY);
+      return '';
+    }
+
+    if (Date.now() - parsedSession.savedAt > ADMIN_SESSION_MAX_AGE_MS) {
+      window.localStorage.removeItem(ADMIN_SESSION_KEY);
+      return '';
+    }
+
+    return String(parsedSession.token).trim();
+  } catch (error) {
+    window.localStorage.removeItem(ADMIN_SESSION_KEY);
+    return '';
+  }
+};
+
+const saveAdminToken = (token) => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  window.localStorage.setItem(
+    ADMIN_SESSION_KEY,
+    JSON.stringify({
+      token,
+      savedAt: Date.now(),
+    })
+  );
+};
+
+const clearAdminToken = () => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  window.localStorage.removeItem(ADMIN_SESSION_KEY);
 };
 
 const defaultProjects = [
@@ -71,6 +125,7 @@ function App() {
   const [projectStatus, setProjectStatus] = useState('Use the admin side to add project images and details.');
   const [isSavingProject, setIsSavingProject] = useState(false);
   const [isLoadingMessages, setIsLoadingMessages] = useState(false);
+  const [isRestoringAdminSession, setIsRestoringAdminSession] = useState(false);
 
   useEffect(() => {
     const loadProjects = async () => {
@@ -100,6 +155,34 @@ function App() {
       setPage('admin');
     }
   }, []);
+
+  useEffect(() => {
+    if (page !== 'admin' || adminVerified || isRestoringAdminSession) {
+      return;
+    }
+
+    const storedToken = readStoredAdminToken();
+
+    if (!storedToken) {
+      return;
+    }
+
+    if (adminTokenRef.current) {
+      adminTokenRef.current.value = storedToken;
+    }
+
+    const restoreSession = async () => {
+      setIsRestoringAdminSession(true);
+
+      try {
+        await handleAdminVerifyToken(storedToken, { rememberSession: true, restoringSession: true });
+      } finally {
+        setIsRestoringAdminSession(false);
+      }
+    };
+
+    restoreSession();
+  }, [page, adminVerified, isRestoringAdminSession]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -162,6 +245,45 @@ function App() {
     }
   };
 
+  const handleAdminVerifyToken = async (token, options = {}) => {
+    const { rememberSession = true, restoringSession = false } = options;
+
+    try {
+      setAdminStatus(restoringSession ? 'Restoring admin session...' : 'Verifying token...');
+
+      const response = await fetch(apiUrl('/api/admin/verify'), {
+        headers: {
+          'x-admin-token': token,
+        },
+      });
+
+      const data = await readJsonResponse(response, 'Unable to verify token.');
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Unable to verify token.');
+      }
+
+      setAdminAuthToken(token);
+      setAdminVerified(true);
+      setAdminStatus('Admin verified. You can now load messages and manage projects.');
+
+      if (rememberSession) {
+        saveAdminToken(token);
+      }
+
+      await loadAdminMessages(token);
+      return true;
+    } catch (error) {
+      clearAdminToken();
+      setAdminAuthToken('');
+      setAdminVerified(false);
+      setAdminMessages([]);
+      setProjectStatus('');
+      setAdminStatus(error.message || 'Could not verify the token.');
+      return false;
+    }
+  };
+
   const handleAdminLoad = async (event) => {
     event.preventDefault();
 
@@ -183,32 +305,7 @@ function App() {
       return;
     }
 
-    try {
-      setAdminStatus('Verifying token...');
-
-      const response = await fetch(apiUrl('/api/admin/verify'), {
-        headers: {
-          'x-admin-token': token,
-        },
-      });
-
-      const data = await readJsonResponse(response, 'Unable to verify token.');
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Unable to verify token.');
-      }
-
-      setAdminAuthToken(token);
-      setAdminVerified(true);
-      setAdminStatus('Admin verified. You can now load messages and manage projects.');
-      await loadAdminMessages(token);
-    } catch (error) {
-      setAdminAuthToken('');
-      setAdminVerified(false);
-      setAdminMessages([]);
-      setProjectStatus('');
-      setAdminStatus(error.message || 'Could not verify the token.');
-    }
+    await handleAdminVerifyToken(token, { rememberSession: true });
   };
 
   const handleProjectSubmit = async (event) => {
@@ -389,17 +486,33 @@ function App() {
       <section className="about-section" id="about">
         <div className="about-copy">
           <p className="section-label">About Me</p>
-          <h2>3 years of interior design experience focused on refined spaces.</h2>
+          <h2>Thoughtful interiors shaped with warmth, balance, and detail.</h2>
           <p>
-            I have 3 years of interior design experience and create commercial and residential
-            interiors that feel practical, refined, and well balanced. My approach is clear,
-            functional, and centered on interiors that feel thoughtfully designed.
+            I design commercial and residential spaces that feel calm, refined, and highly usable.
+            My process is centered on practical planning, clean visual language, and finishes that
+            make a space feel elevated without losing comfort.
           </p>
+          <div className="about-stats">
+            <div className="about-stat">
+              <strong>03+</strong>
+              <span>Years designing interiors</span>
+            </div>
+            <div className="about-stat">
+              <strong>Commercial</strong>
+              <span>and residential projects</span>
+            </div>
+            <div className="about-stat">
+              <strong>Refined</strong>
+              <span>Layouts with warm finishes</span>
+            </div>
+          </div>
         </div>
 
         <div className="about-contact">
+          <p className="about-contact-label">Let’s connect</p>
           <a href="tel:+916267301774">Phone: 6267301774</a>
           <a href="mailto:ankiisri08@gmail.com">Email: ankiisri08@gmail.com</a>
+          <span className="about-contact-note">Available for consultations and project enquiries.</span>
         </div>
       </section>
     </>
@@ -488,6 +601,7 @@ function App() {
               setAdminVerified(false);
               setAdminAuthToken('');
               setAdminMessages([]);
+                clearAdminToken();
               if (adminTokenRef.current) {
                 adminTokenRef.current.value = '';
               }

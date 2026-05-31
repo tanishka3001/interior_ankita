@@ -12,7 +12,7 @@
 .portfolio-page {
   position: relative;
   z-index: 1;
-  width: min(1360px, calc(100% - 56px));
+  width: min(1360px, calc(100% - 80px));
   margin: 0 auto;
   padding: 24px 0 64px;
 }
@@ -231,9 +231,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   text-align: center;
-  padding: 24px;
+  padding: 34px 24px 24px;
   border-radius: 34px;
   border: 1px solid rgba(0, 121, 121, 0.14);
   background: linear-gradient(180deg, rgba(255, 240, 228, 0.9), rgba(255, 224, 197, 0.92));
@@ -343,7 +343,8 @@
 
 .work-image {
   position: relative;
-  min-height: 340px;
+  aspect-ratio: 16 / 9;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -360,6 +361,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center top;
   transform: scale(1.01);
   transition: transform 500ms ease, filter 500ms ease;
   animation: imageReveal 900ms ease both;
@@ -498,42 +500,99 @@
 
 .about-section {
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(240px, 0.65fr);
-  gap: 18px;
-  align-items: center;
-  padding: 8px 0 14px;
+  grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.6fr);
+  gap: 22px;
+  align-items: stretch;
+  padding: 12px 0 18px;
 }
 
 .about-copy {
-  max-width: 70ch;
+  display: grid;
+  gap: 16px;
+  padding: 28px;
+  border-radius: 34px;
+  border: 1px solid rgba(0, 121, 121, 0.12);
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 18px 40px rgba(93, 61, 37, 0.08);
 }
 
 .about-copy h2 {
-  font-size: clamp(1.7rem, 2.7vw, 2.5rem);
-  margin-bottom: 14px;
+  max-width: 14ch;
+  font-size: clamp(2rem, 3.2vw, 3rem);
+  line-height: 1.02;
+  margin: 0;
+}
+
+.about-copy p {
+  max-width: 66ch;
+  margin: 0;
+}
+
+.about-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.about-stat {
+  display: grid;
+  gap: 6px;
+  padding: 16px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(255, 240, 228, 0.9), rgba(255, 255, 255, 0.92));
+  border: 1px solid rgba(0, 121, 121, 0.08);
+}
+
+.about-stat strong {
+  color: var(--blue-2);
+  font-size: 1.1rem;
+  letter-spacing: -0.03em;
+}
+
+.about-stat span {
+  color: var(--muted);
+  line-height: 1.45;
 }
 
 .about-contact {
   display: grid;
   gap: 12px;
-  align-self: center;
-  justify-self: end;
-  min-width: 240px;
-  padding: 18px 18px;
+  align-self: stretch;
+  justify-self: stretch;
+  padding: 28px;
   border: 1px solid rgba(0, 121, 121, 0.12);
-  border-radius: 22px;
-  background: rgba(255, 255, 255, 0.9);
+  border-radius: 34px;
+  background: linear-gradient(180deg, rgba(36, 177, 177, 0.08), rgba(255, 255, 255, 0.94));
   color: var(--ink);
+  box-shadow: 0 18px 40px rgba(93, 61, 37, 0.08);
+  align-content: start;
+}
+
+.about-contact-label {
+  margin: 0 0 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.72rem;
+  color: var(--blue-2);
+  font-weight: 700;
 }
 
 .about-contact a {
   color: var(--ink);
   text-decoration: none;
   line-height: 1.5;
+  font-weight: 600;
 }
 
 .about-contact a:hover {
   color: var(--blue-2);
+}
+
+.about-contact-note {
+  margin-top: 6px;
+  color: var(--muted);
+  line-height: 1.6;
 }
 
 .consultation-page {
@@ -888,7 +947,7 @@
 
 @media (max-width: 768px) {
   .portfolio-page {
-    width: min(100% - 20px, 1360px);
+    width: min(100% - 28px, 1360px);
     padding: 14px 0 30px;
   }
 
@@ -940,6 +999,7 @@
     width: 100%;
     min-height: 420px;
     aspect-ratio: auto;
+    padding-top: 28px;
   }
 
   .work-section,
@@ -975,7 +1035,7 @@
   }
 
   .work-image {
-    min-height: 300px;
+    aspect-ratio: 16 / 9;
   }
 
   .work-copy h3 {
@@ -987,6 +1047,10 @@
   .admin-project-form,
   .admin-toolbar,
   .admin-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .about-stats {
     grid-template-columns: 1fr;
   }
 
@@ -1031,12 +1095,18 @@
     width: 100%;
   }
 
+  .about-copy,
+  .about-contact {
+    padding: 20px;
+    border-radius: 26px;
+  }
+
   .work-grid {
     grid-auto-columns: minmax(88%, 92%);
   }
 
   .work-image {
-    min-height: 240px;
+    aspect-ratio: 16 / 9;
   }
 
   .hero-summary span {
@@ -1063,7 +1133,7 @@
 
 @media (max-width: 420px) {
   .portfolio-page {
-    width: min(100% - 14px, 1360px);
+    width: min(100% - 20px, 1360px);
     padding: 12px 0 24px;
   }
 
@@ -1107,12 +1177,22 @@
   }
 
   .work-image {
-    min-height: 220px;
+    aspect-ratio: 16 / 9;
   }
 
   .consultation-form,
   .admin-project-form,
   .admin-toolbar {
     padding: 16px;
+  }
+
+  .about-copy h2 {
+    max-width: 100%;
+    font-size: clamp(1.8rem, 9vw, 2.4rem);
+  }
+
+  .about-contact a,
+  .about-contact-note {
+    font-size: 0.96rem;
   }
 }

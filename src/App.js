@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import './App.css';
 
 const ADMIN_PATH = '/studio-admin';
@@ -156,34 +156,6 @@ function App() {
     }
   }, []);
 
-  useEffect(() => {
-    if (page !== 'admin' || adminVerified || isRestoringAdminSession) {
-      return;
-    }
-
-    const storedToken = readStoredAdminToken();
-
-    if (!storedToken) {
-      return;
-    }
-
-    if (adminTokenRef.current) {
-      adminTokenRef.current.value = storedToken;
-    }
-
-    const restoreSession = async () => {
-      setIsRestoringAdminSession(true);
-
-      try {
-        await handleAdminVerifyToken(storedToken, { rememberSession: true, restoringSession: true });
-      } finally {
-        setIsRestoringAdminSession(false);
-      }
-    };
-
-    restoreSession();
-  }, [page, adminVerified, isRestoringAdminSession]);
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     const form = event.currentTarget;
@@ -218,7 +190,7 @@ function App() {
     }
   };
 
-  const loadAdminMessages = async (token) => {
+  const loadAdminMessages = useCallback(async (token) => {
     try {
       setIsLoadingMessages(true);
       setAdminStatus('Loading enquiries...');
@@ -243,9 +215,9 @@ function App() {
     } finally {
       setIsLoadingMessages(false);
     }
-  };
+  }, []);
 
-  const handleAdminVerifyToken = async (token, options = {}) => {
+  const handleAdminVerifyToken = useCallback(async (token, options = {}) => {
     const { rememberSession = true, restoringSession = false } = options;
 
     try {
@@ -282,7 +254,35 @@ function App() {
       setAdminStatus(error.message || 'Could not verify the token.');
       return false;
     }
-  };
+  }, [loadAdminMessages]);
+
+  useEffect(() => {
+    if (page !== 'admin' || adminVerified || isRestoringAdminSession) {
+      return;
+    }
+
+    const storedToken = readStoredAdminToken();
+
+    if (!storedToken) {
+      return;
+    }
+
+    if (adminTokenRef.current) {
+      adminTokenRef.current.value = storedToken;
+    }
+
+    const restoreSession = async () => {
+      setIsRestoringAdminSession(true);
+
+      try {
+        await handleAdminVerifyToken(storedToken, { rememberSession: true, restoringSession: true });
+      } finally {
+        setIsRestoringAdminSession(false);
+      }
+    };
+
+    restoreSession();
+  }, [page, adminVerified, isRestoringAdminSession, handleAdminVerifyToken]);
 
   const handleAdminLoad = async (event) => {
     event.preventDefault();
@@ -736,7 +736,9 @@ function App() {
             <button type="button" onClick={() => setPage('home')}>
               Home
             </button>
-            <a href="#work">Work</a>
+            <a className="nav-highlight" href="#work">
+              Work
+            </a>
             <a href="#about">About me</a>
             <button className="nav-cta" type="button" onClick={() => setPage('consultation')}>
               Book consultation

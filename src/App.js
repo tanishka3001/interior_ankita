@@ -59,7 +59,7 @@ const consultationSteps = [
 
 function App() {
   const [page, setPage] = useState('home');
-  const [formStatus, setFormStatus] = useState('Idle');
+  const [formStatus, setFormStatus] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [backendProjects, setBackendProjects] = useState([]);
   const [isLoadingProjects, setIsLoadingProjects] = useState(false);
@@ -103,6 +103,7 @@ function App() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    const form = event.currentTarget;
     const formData = new FormData(event.currentTarget);
     const payload = Object.fromEntries(formData.entries());
     const endpoint = process.env.REACT_APP_CONTACT_API_URL || '/api/contact';
@@ -125,7 +126,7 @@ function App() {
         throw new Error(data.error || 'Unable to send message.');
       }
 
-      event.currentTarget.reset();
+      form.reset();
       setFormStatus('Message sent. Your backend can save it now.');
     } catch (error) {
       setFormStatus(error.message || 'Message could not be sent right now. Please try again later.');
@@ -287,6 +288,37 @@ function App() {
     }
   };
 
+  const handleMessageDelete = async (messageId) => {
+    if (!adminVerified || !adminAuthToken.trim()) {
+      setAdminStatus('Verify the admin token before deleting messages.');
+      return;
+    }
+
+    try {
+      setAdminStatus('Deleting message...');
+
+      const response = await fetch(apiUrl('/api/admin/messages'), {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-token': adminAuthToken.trim(),
+        },
+        body: JSON.stringify({ messageId }),
+      });
+
+      const data = await readJsonResponse(response, 'Unable to delete message.');
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Unable to delete message.');
+      }
+
+      setAdminMessages((currentMessages) => currentMessages.filter((message) => message._id !== messageId));
+      setAdminStatus('Message removed successfully.');
+    } catch (error) {
+      setAdminStatus(error.message || 'Could not delete message.');
+    }
+  };
+
   const HomePage = () => (
     <>
       <section className="hero">
@@ -322,14 +354,11 @@ function App() {
 
       <section className="work-section" id="work">
         <div className="section-head">
-          <div>
-            <p className="section-label">Work</p>
-            <h2>Featured projects.</h2>
-          </div>
-          <p>
-            Selected commercial and residential interiors with clean lines, warm finishes, and a
-            refined feel.
-          </p>
+          <p className="section-label section-label-animated">Work</p>
+          <h2 className="work-heading">
+            <span>Featured</span>
+            <span>Projects</span>
+          </h2>
         </div>
 
         <div className="work-grid">
@@ -416,9 +445,11 @@ function App() {
           <button type="submit" disabled={isSubmitting}>
             {isSubmitting ? 'Sending...' : 'Send enquiry'}
           </button>
-          <p className="form-status" aria-live="polite">
-            {formStatus}
-          </p>
+          {formStatus ? (
+            <p className="form-status" aria-live="polite">
+              {formStatus}
+            </p>
+          ) : null}
         </form>
       </div>
     </section>
@@ -554,6 +585,15 @@ function App() {
                 <time>
                   {message.createdAt ? new Date(message.createdAt).toLocaleString() : 'Recent message'}
                 </time>
+                {message._id ? (
+                  <button
+                    type="button"
+                    className="admin-delete-btn"
+                    onClick={() => handleMessageDelete(message._id)}
+                  >
+                    Delete
+                  </button>
+                ) : null}
               </article>
             ))}
           </div>

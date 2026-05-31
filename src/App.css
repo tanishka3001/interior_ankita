@@ -259,14 +259,61 @@
 
 .section-head {
   display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  align-items: start;
-  margin-bottom: 18px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 24px;
 }
 
-.section-head > p {
-  max-width: 38ch;
+.section-label-animated {
+  position: relative;
+  animation: labelFloat 3.5s ease-in-out infinite;
+}
+
+.work-heading {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-family: 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', Georgia, serif;
+  font-size: clamp(2.5rem, 5.8vw, 5.8rem);
+  line-height: 0.95;
+  letter-spacing: -0.07em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.work-heading span {
+  display: inline-block;
+  width: fit-content;
+  background: linear-gradient(90deg, var(--ink) 0%, var(--blue-2) 45%, var(--blue-1) 100%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 5s linear infinite;
+}
+
+.work-heading span:last-child {
+  margin-left: clamp(0rem, 4vw, 3.25rem);
+  animation-delay: -2.5s;
+}
+
+.work-section {
+  padding-top: 14px;
+}
+
+.work-section::before {
+  content: '';
+  position: absolute;
+  inset: -18px -8px auto;
+  height: 180px;
+  border-radius: 36px;
+  background: radial-gradient(circle at left top, rgba(36, 177, 177, 0.18), transparent 60%),
+    radial-gradient(circle at right center, rgba(0, 121, 121, 0.12), transparent 50%);
+  pointer-events: none;
+  z-index: -1;
+  filter: blur(6px);
 }
 
 .work-grid {
@@ -281,6 +328,12 @@
   border: 1px solid rgba(0, 121, 121, 0.12);
   background: rgba(255, 255, 255, 0.84);
   box-shadow: 0 16px 34px rgba(93, 61, 37, 0.08);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.work-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 24px 40px rgba(93, 61, 37, 0.14);
 }
 
 .work-image {
@@ -333,7 +386,49 @@
 .work-copy h3 {
   margin: 0 0 10px;
   color: var(--ink);
-  font-size: 1.15rem;
+  font-size: 1.32rem;
+}
+
+.work-card:nth-child(1) {
+  animation: riseIn 700ms ease both;
+}
+
+.work-card:nth-child(2) {
+  animation: riseIn 700ms ease 120ms both;
+}
+
+.work-card:nth-child(3) {
+  animation: riseIn 700ms ease 240ms both;
+}
+
+@keyframes riseIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+@keyframes labelFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
 }
 
 .about-section {

@@ -1,5 +1,6 @@
 const connectToDatabase = require('../_lib/mongodb');
 const getAdminToken = require('../_lib/adminToken');
+const { ObjectId } = require('mongodb');
 
 function sendJson(res, statusCode, payload) {
   res.statusCode = statusCode;
@@ -7,13 +8,19 @@ function sendJson(res, statusCode, payload) {
   res.end(JSON.stringify(payload));
 }
 
-module.exports = async (req, res) => {
-  if (req.method !== 'GET') {
-    res.setHeader('Allow', 'GET');
-    sendJson(res, 405, { error: 'Method not allowed' });
-    return;
+function parseBody(req) {
+  if (typeof req.body === 'object' && req.body !== null) {
+    return req.body;
   }
 
+  if (typeof req.body === 'string' && req.body.length > 0) {
+    return JSON.parse(req.body);
+  }
+
+  return {};
+}
+
+module.exports = async (req, res) => {
   const adminToken = getAdminToken();
 
   if (!adminToken) {
@@ -29,17 +36,38 @@ module.exports = async (req, res) => {
 
   try {
     const { db } = await connectToDatabase();
-    const messages = await db
-      .collection('contact_messages')
-      .find({})
-      .sort({ createdAt: -1 })
-      .limit(20)
-      .toArray();
 
-    sendJson(res, 200, {
-      ok: true,
-      messages,
-    });
+    if (req.method === 'GET') {
+      const messages = await db
+        .collection('contact_messages')
+        .find({})
+        .sort({ createdAt: -1 })
+        .limit(20)
+        .toArray();
+
+      sendJson(res, 200, {
+        ok: true,
+        messages,
+      });
+      return;
+    }
+
+    if (req.method === 'DELETE') {
+      const body = parseBody(req);
+      const messageId = String(body.messageId || '').trim();
+
+      if (!messageId) {
+        sendJson(res, 400, { error: 'messageId is required.' });
+        return;
+      }
+
+      await db.collection('contact_messages').deleteOne({ _id: new ObjectId(messageId) });
+      sendJson(res, 200, { ok: true });
+      return;
+    }
+
+    res.setHeader('Allow', 'GET, DELETE');
+    sendJson(res, 405, { error: 'Method not allowed' });
   } catch (error) {
     console.error('Admin messages API error:', error);
     sendJson(res, 500, { error: 'Unable to load messages right now.' });

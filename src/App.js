@@ -5,6 +5,7 @@ const ADMIN_PATH = '/studio-admin';
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '';
 const ADMIN_SESSION_KEY = 'interior-ankita-admin-session';
 const ADMIN_SESSION_MAX_AGE_MS = 1000 * 60 * 60 * 24 * 14;
+const MAIN_PORTFOLIO_IMAGE_URL = 'https://ibb.co/Xx4K5y2y';
 
 const apiUrl = (path) => {
   if (/^https?:\/\//i.test(path)) {
@@ -449,7 +450,7 @@ function App() {
 
         <div className="hero-image-wrap">
           <div className="hero-image-placeholder">
-            <span>Main portfolio image</span>
+            <img src={MAIN_PORTFOLIO_IMAGE_URL} alt="Interior design portfolio" />
           </div>
         </div>
       </section>
@@ -492,20 +493,6 @@ function App() {
             My process is centered on practical planning, clean visual language, and finishes that
             make a space feel elevated without losing comfort.
           </p>
-          <div className="about-stats">
-            <div className="about-stat">
-              <strong>03+</strong>
-              <span>Years designing interiors</span>
-            </div>
-            <div className="about-stat">
-              <strong>Commercial</strong>
-              <span>and residential projects</span>
-            </div>
-            <div className="about-stat">
-              <strong>Refined</strong>
-              <span>Layouts with warm finishes</span>
-            </div>
-          </div>
         </div>
 
         <div className="about-contact">

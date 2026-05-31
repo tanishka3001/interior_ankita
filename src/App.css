@@ -1067,11 +1067,8 @@
   }
 
   .work-grid {
-    display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: calc(100vw - 56px);
+    display: flex;
     gap: 16px;
-    align-items: start;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     scroll-snap-stop: always;
@@ -1089,14 +1086,25 @@
   }
 
   .work-card {
+    flex: 0 0 calc(100vw - 56px);
     scroll-snap-align: center;
+    align-self: flex-start;
     transform: translateZ(0);
-    width: 100%;
   }
 
   .work-image,
   .work-card-image-only .work-image {
     aspect-ratio: 16 / 9;
+  }
+
+  .work-copy {
+    padding: 16px 18px 18px;
+  }
+
+  .work-copy p:last-child,
+  .work-copy h3:last-child,
+  .work-copy span:last-child {
+    margin-bottom: 0;
   }
 
   .work-card::before {
@@ -1165,8 +1173,11 @@
   }
 
   .work-grid {
-    grid-auto-columns: calc(100vw - 44px);
     gap: 14px;
+  }
+
+  .work-card {
+    flex-basis: calc(100vw - 44px);
   }
 
   .work-image {
@@ -1237,7 +1248,11 @@
   }
 
   .work-grid {
-    grid-auto-columns: calc(100vw - 34px);
+    gap: 12px;
+  }
+
+  .work-card {
+    flex-basis: calc(100vw - 34px);
   }
 
   .work-image {

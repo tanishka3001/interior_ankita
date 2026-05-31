@@ -383,6 +383,7 @@
 
 .work-card:hover .work-image::after {
   opacity: 1;
+}
 
 .work-image-1 {
   background: linear-gradient(160deg, rgba(255, 240, 228, 0.96), rgba(36, 177, 177, 0.14)),

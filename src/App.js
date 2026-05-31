@@ -184,7 +184,7 @@ function App() {
       }
 
       form.reset();
-      setFormStatus('Message sent. Your backend can save it now.');
+      setFormStatus('Message sent successfully. I will get back to you soon.');
     } catch (error) {
       setFormStatus(error.message || 'Message could not be sent right now. Please try again later.');
     } finally {
